@@ -1,0 +1,43 @@
+services:
+  # Serwer bazodanowy
+  postgres-db:
+    image: postgres:18
+    container_name: statflow-db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./SQL:/docker-entrypoint-initdb.d  # skrypt inicjujący bazy danych
+      - postgres_data:/var/lib/postgresql/pgdata  # trwałe przechowywanie danych bazy danych
+  
+  # Narzędzie do zarządzania bazą danych
+  adminer:
+    image: adminer:latest
+    container_name: statflow-adminer
+    restart: always
+    ports:
+      - 8090:8080
+    depends_on:
+      - postgres-db
+
+  # Serwis odpowiadający za rzeczy związane z użytkownikiem
+  user-service:
+    image: statflow-user-service:latest
+    container_name: statflow-user-service
+    build:
+      context: ./src
+      dockerfile: User-service/Dockerfile
+    restart: always
+    ports:
+      - 8081:8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres-db;Port=5432;Database=users_db;Username=admin;Password=admin
+    depends_on:
+      - postgres-db
+    
+volumes:
+  postgres_data:

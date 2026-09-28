@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../../../../../../source/repos/Pasterzka/StatFlow/src/Shared/Shared.csproj" Id="5c387be2-671e-4d59-a5cb-be527b8d2686" />
+  <Project Path="../../../../../../source/repos/Pasterzka/StatFlow/src/User-service/User-service.csproj" />
+</Solution>
